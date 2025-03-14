@@ -1,0 +1,7 @@
+// Define the Implementation Guide
+Instance: MyImplementationGuide
+InstanceOf: ImplementationGuide
+* title = "My Patient Implementation Guide"
+* description = "This is an example implementation guide for Patient profile."
+* version = "1.0.0"
+* definition.resource 1..* contains MyPatientProfile 1..1
