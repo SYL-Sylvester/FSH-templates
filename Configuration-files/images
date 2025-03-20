@@ -1,1 +1,3 @@
+input/images
+
 // Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the input/images subdirectory. These files can be referenced by user-provided pages or menus.
