@@ -1,11 +1,11 @@
+# Valueset Template
 
-// Valueset Template
 ValueSet: MyValueSet
 * ^url = "http://example.org/fhir/ValueSet/MyValueSet"
 * ^version = "1.0.0"
 * #example-code (REQUIRED)
 
-// Bind to profile
+## Bind to profile
 Profile: MyPatientProfile
 ... other constraints ...
 * maritalStatus from MyValueSet (required)
