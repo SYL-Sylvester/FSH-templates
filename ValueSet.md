@@ -12,7 +12,7 @@
 
     // ValueSet with codes from multiple systems
 
-    ValueSet AllDiagnosisVS {
+    ValueSet AllDiagnosisVS
     Id: all-diagnosis-vs
     Title: "All Diagnosis Codes"
     Description: "A comprehensive list of diagnosis codes."
