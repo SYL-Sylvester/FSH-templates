@@ -323,7 +323,12 @@ Use the verbose method:
 
 
 ## Template 3: Constrained Extension
-This template shows how to create an extension that further constrains the data type or cardinality of its value, often based on an existing extension.
+
+// a constrained extension is a Profile built on top of an existing Extension definition. You're not creating an entirely new extension type from scratch, but rather taking a more general base extension and making it more specific for a particular use case by adding constraints.
+
+// Example:
+
+Let's assume there's a base extension GeneralCommentExtension that allows a string or Annotation as its value. We want to create a constrained version ClinicalNoteExtension that only allows a string and makes the value mandatory.
 
     // --- Assume this Base Extension is defined elsewhere ---
     /*
@@ -343,7 +348,6 @@ This template shows how to create an extension that further constrains the data 
     Id: clinical-note-extension // Unique ID for this profile
     Title: "Clinical Note Extension (Constrained)"
     Description: "A specific type of comment for clinical notes, constrained to be a mandatory string."
-    Status: active
     
     // --- Constraints ---
     // 1. Constrain the data type: Only allow 'string' for value[x]
