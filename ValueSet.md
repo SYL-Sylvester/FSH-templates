@@ -2,7 +2,7 @@
 
     ValueSet: MyValueSet
     Id: my-valuset
-    Title: "Simple valueset
+    Title: "Simple valueset"
     Description: Template for valuesets
     * #example-code (REQUIRED) 
     * include codes from system 
