@@ -47,7 +47,7 @@
     * #hispanic "Hispanic" "Individuals who identify as Hispanic or Latino."
     * #native "Native American" "Individuals who identify as Native American or Alaska Native."
 
-    Extension EthnicityExtension {
+    Extension EthnicityExtension
     Id: ethnicity-extension
     Title: "Ethnicity Extension"
     Description: "An extension to capture patient ethnicity."
