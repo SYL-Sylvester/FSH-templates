@@ -18,8 +18,8 @@ This template defines an extension with a single value of a specific data type.
 * Id: [extension-id]: Sets the logical identifier (kebab-case is common).
 * Title: "[Human-Readable Title]": Provides a descriptive title.
 * Description: "[A brief description ... ]": Explains the purpose of the Extension.
-* * context [ResourceType1], ...: Specifies the FHIR resource types where this extension can be applied. List multiple resource types separated by commas.
-* * value[x] : [DataType]: Defines the value of the extension:
+  * context [ResourceType1], ...: Specifies the FHIR resource types where this extension can be applied. List multiple resource types separated by commas.
+  * value[x] : [DataType]: Defines the value of the extension:
       * value[x] is the element name. Replace [x] with the capitalized FHIR data type (e.g., valueString, valueInteger, valueCodeableConcept, valueReference).
       * :[DataType] specifies the data type of the value.
 
