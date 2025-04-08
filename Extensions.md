@@ -25,7 +25,7 @@ This template defines an extension with a single value of a specific data type.
 
 ### Example of using a Simple Value Extension:
 
-    // This is a simple value extension to capture "Preferred Language of Communication"
+// This is a simple value extension to capture "Preferred Language of Communication"
 // First, we need a simple CodeSystem and ValueSet for the language codes used in our extension. We'll use standard ISO language codes.
     
     CodeSystem: LanguageCodeSystem
@@ -155,113 +155,202 @@ Use the verbose method:
 - Explicit Clarity/Control: In very complex cases, you might choose the verbose method simply to be absolutely explicit about every piece of data being populated, leaving nothing to the compiler's inference.
   
 *In short, use the verbose method when you need more control, need to populate optional elements like .text or .version, need multiple codings, or are referencing systems not defined locally.*
-
-
-
-
-
-
-
-
-
-
-
     
 
-## Template 2: Complex Value Extension
-This template defines an extension where the value is a complex data type or a contained resource.
+## Template 2: Complex Extension
 
-    Extension: [Extension Name]
-    Id: [extension-id]
-    Title: "[Human-Readable Title]"
-    Description: "[A brief description of the extension with a complex value.]"
-    * ^url = "[Canonical URL for the Extension]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
-    * context [ResourceType1], ...
-    * contextType #[...]
-    * value[x] : [ComplexDataType] // e.g., valueAddress, valueHumanName, valueReference(ResourceType)
+// A "complex" extension is one that doesn't just have a single value[x] element, but instead groups multiple data elements together. Each data element within the complex extension is itself a nested "simple" extension with its own url (relative to the main extension) and value[x].
 
-### Example of Complex Value Extension
-    Extension: PatientUsualAddress
-    Id: patient-usual-address
-    Title: "Patient Usual Address"
-    Description: "Extension to record the patient's usual address (may differ from legal address)."
-    * ^url = "http://example.org/fhir/StructureDefinition/patient-usual-address"
-    * ^version = "1.0.0"
-    * ^status = #draft
-    * context Patient
-    * contextType #resource
-    * valueAddress : Address
-
-
-## Template 3: Extension with Multiple Value Fields
-This template defines an extension with multiple fields to capture different pieces of information. This is achieved by defining child elements within the extension.
-
-    Extension: [Extension Name]
-    Id: [extension-id]
-    Title: "[Human-Readable Title]"
-    Description: "[A brief description of the extension with multiple fields.]"
-    * ^url = "[Canonical URL for the Extension]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
-    * context [ResourceType1], ...
-    * contextType #[...]
-    * value[x] MS // The primary value (often a BackboneElement)
-
-    // Define child elements within the extension
-
-    * value[x].field1 : [DataType1] MS // Must Support field
-    * value[x].field2 : [DataType2] 0..1 // Optional field
-    * value[x].field3 : [DataType3] // Required field (cardinality 1..1 implied)
-// Add more fields as needed
-
-### Example of Extension with Multiple Value Fields:
-
-    Extension: ObservationInterpretationQualifier
-    Id: observation-interpretation-qualifier
-    Title: "Observation Interpretation Qualifier"
-    Description: "Extension to provide additional detail about the interpretation of an observation."
-    * ^url = "http://example.org/fhir/StructureDefinition/observation-interpretation-qualifier"
-    * ^version = "1.0.0"
-    * ^status = #draft
-    * context Observation.interpretation
-    * contextType #element
-    * valueCodeableConcept MS // The primary value
-
-    * valueCodeableConcept.coding MS
-    * valueCodeableConcept.coding.system MS
-    * valueCodeableConcept.coding.code MS
-    * valueCodeableConcept.coding.display MS
-    * valueCodeableConcept.text 0..1
-    * valueString 0..1 // Optional free-text qualifier
+    Extension: MyComplexExtensionName // e.g., BillingDetailsExtension
+    Id: my-complex-extension-id // e.g., billing-details
+    Title: "My Complex Extension Title" // e.g., "Billing Details"
+    Description: "A clear description of what this complex extension represents as a whole." // e.g., "Groups related billing information like invoice number and billing period."
+    
+    // Define where this complex extension structure can be used.
+    // Can be a Resource (Patient, Claim, etc.), a DataType (Address, Identifier),
+    // or another Extension. Use specific ElementDefinition paths if needed.
+    Context: Resource // Example: Allow on any resource root
+    
+    // --- Root Level Constraints ---
+    // A complex extension typically doesn't have a value at the root.
+    // It serves as a container for its components.
+    * value[x] 0..0
+    
+    // --- Component Definitions (Slices on 'extension') ---
+    
+    // Component 1: A mandatory text component (e.g., Invoice Number)
+    * extension contains componentOneName 1..1 MS // Define slice name, make mandatory (1..1), Must Support (MS)
+    * extension[componentOneName].url = "componentOneName" // *** CRITICAL: Fix the relative URL for this component ***
+    * extension[componentOneName].value[x] only string // Define the data type for this component's value
+    * extension[componentOneName].valueString MS // Can add constraints to the specific value type
+    
+    // Component 2: An optional date component (e.g., Issue Date)
+    * extension contains componentTwoName 0..1 // Define slice name, make optional (0..1)
+    * extension[componentTwoName].url = "componentTwoName" // *** CRITICAL: Fix the relative URL for this component ***
+    * extension[componentTwoName].value[x] only date // Define the data type
+    
+    // --- Add more components as needed following the pattern above ---
 
 
-## Template 4: Constrained Extension
+
+### Example of Complex Extension
+
+// This is a Complex extension for Funding source.
+// We need these for the source component of our complex extension.
+
+    CodeSystem: FundingSourceCS
+    Id: funding-source-cs
+    Title: "Funding Source Code System"
+    Description: "Codes identifying the type of funding source."
+    * #govt "Government Program"
+    * #ins "Insurance"
+    * #priv "Private Funding"
+    * #research "Research Grant"
+    * #other "Other"
+    
+    ValueSet: FundingSourceVS
+    Id: funding-source-vs
+    Title: "Funding Source Value Set"
+    Description: "A value set for funding source types."
+    * include codes from system FundingSourceCS
+
+// This is the extension structure for grouping funding details.
+
+    Extension: FundingSourceDetailExtension
+    Id: funding-source-detail // The unique ID for this extension definition
+    Title: "Funding Source Detail"
+    Description: "Provides detailed information about a source of funding, including the source type/name, an identifier for the funding, the amount, and the applicable period."
+    Status: draft
+    Context: Patient // This extension can be used on the Patient resource root
+    
+    // --- Root Level Constraints ---
+    * value[x] 0..0 // No single value at the root, it's a container
+    
+    // --- Component Definitions (Slices on 'extension') ---
+    
+    // Component 1: The source type/name (e.g., Government, Insurance) - Mandatory
+    * extension contains source 1..1 MS
+    * extension[source].url = "source" // Relative URL for this component
+    * extension[source].value[x] only CodeableConcept
+    * extension[source].valueCodeableConcept from FundingSourceVS (required) // Bind to our ValueSet
+    
+    // Component 2: An identifier for the specific funding/grant/policy - Optional
+    * extension contains identifier 0..1 MS
+    * extension[identifier].url = "identifier" // Relative URL for this component
+    * extension[identifier].value[x] only Identifier
+    
+    // Component 3: The amount of funding - Optional
+    * extension contains amount 0..1
+    * extension[amount].url = "amount" // Relative URL for this component
+    * extension[amount].value[x] only Money
+    
+    // Component 4: The period the funding applies to - Optional
+    * extension contains fundingPeriod 0..1
+    * extension[fundingPeriod].url = "fundingPeriod" // Relative URL for this component
+    * extension[fundingPeriod].value[x] only Period
+
+// This is how we bind to a resource profile.
+
+    Profile: PatientWithFundingProfile
+    Parent: Patient
+    Id: patient-with-funding-profile
+    Title: "Patient Profile with Funding Source Details"
+    Description: "A Patient profile that includes the complex Funding Source Detail extension, allowing for multiple funding sources."
+    Status: draft
+    
+    // --- Core Element Constraints (Examples) ---
+    * identifier MS
+    * name MS
+    * birthDate MS
+    
+    // --- Extension Constraint ---
+    // Include the complex extension. Allow multiple instances (0..*). Make it Must Support (MS).
+    // Reference it by the Id of the Extension definition ('funding-source-detail').
+    * extension contains funding-source-detail 0..* MS
+
+// Example Patient Profile that includes one instance of the funding-source-detail complex extension.
+
+    Instance: ExampleFundedPatient
+    InstanceOf: PatientWithFundingProfile // Conforms to the profile above
+    Usage: #example
+    Title: "Example Patient with Funding Details"
+    Description: "Demonstrates a Patient instance using the complex Funding Source Detail extension."
+    
+    // --- Basic Patient Data ---
+    * id = "patient-funding-ex01"
+    * identifier[0].use = #official
+    * identifier[0].system = "urn:oid:1.2.840.113554.1.2.3.4.5.6" // Example Ontario HCN OID
+    * identifier[0].value = "111222333-AB"
+    * name[0].family = "Funding"
+    * name[0].given = "Example"
+    * birthDate = "1988-11-01"
+    * gender = #female
+    
+    // --- Complex Extension Instance Data ---
+    // Start the slice for the complex extension using its definition ID.
+    // Use index [0] since cardinality is 0..* (even if there's only one instance here).
+    // * extension[<ExtensionDefinitionId>][<index>]...
+    
+    // --- Funding Source 1 ---
+    // Now, within the complex extension instance, add each component using *its* specific url.
+    // * extension[<ExtensionDefinitionId>][<index>].extension[<componentUrl>].value<DataType> = <value>
+    
+    // Component: source (Mandatory)
+    * extension[funding-source-detail][0].extension[source].valueCodeableConcept = FundingSourceCS#govt "Government Program"
+    
+    // Component: identifier (Optional)
+    * extension[funding-source-detail][0].extension[identifier].valueIdentifier.system = "urn:oid:2.16.840.1.113883.3.4.5.6" // Example Funding Program OID
+    * extension[funding-source-detail][0].extension[identifier].valueIdentifier.value = "ON-Disability-Support-123"
+    * extension[funding-source-detail][0].extension[identifier].assigner.display = "Ontario Ministry of Community and Social Services"
+    
+    // Component: amount (Optional)
+    * extension[funding-source-detail][0].extension[amount].valueMoney.value = 1250.00
+    * extension[funding-source-detail][0].extension[amount].valueMoney.currency = #CAD
+    
+    // Component: fundingPeriod (Optional)
+    * extension[funding-source-detail][0].extension[fundingPeriod].valuePeriod.start = "2024-04-01"
+    
+    
+    // --- Optional: Example of a Second Funding Source ---
+    /*
+    * extension[funding-source-detail][1].extension[source].valueCodeableConcept = FundingSourceCS#ins "Insurance"
+    * extension[funding-source-detail][1].extension[identifier].valueIdentifier.system = "urn:oid:1.1.1.1.1"
+    * extension[funding-source-detail][1].extension[identifier].valueIdentifier.value = "PolicyXYZ-99"
+    * extension[funding-source-detail][1].extension[amount].valueMoney.value = 800.00
+    * extension[funding-source-detail][1].extension[amount].valueMoney.currency = #CAD
+    * extension[funding-source-detail][1].extension[fundingPeriod].valuePeriod.start = "2024-01-01"
+    * extension[funding-source-detail][1].extension[fundingPeriod].valuePeriod.end = "2024-12-31"
+
+
+## Template 3: Constrained Extension
 This template shows how to create an extension that further constrains the data type or cardinality of its value, often based on an existing extension.
 
-    Extension: [Extension Name]
-    Parent: [Base Extension URL] // URL of the extension you are constraining
-    Id: [extension-id]
-    Title: "[Human-Readable Title]"
-    Description: "[A brief description of the constrained extension.]"
-    * ^url = "[Canonical URL for the Constrained Extension]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
-    * value[x] only [SpecificDataType] // Constrain the data type
-    * value[x] 1..1 // Constrain the cardinality
-    // Add other constraints as needed
-
-### Example of Constrained Extension:
-
-    Extension: USCoreRaceExtension
-    Parent: http://hl7.org/fhir/StructureDefinition/us-core-race
-    Id: my-us-core-race
-    Title: "My US Core Race Extension"
-    Description: "A specific profile of the US Core Race Extension, perhaps with additional constraints."
-    * ^url = "http://example.org/fhir/StructureDefinition/my-us-core-race"
-    * ^version = "1.0.0"
-    * ^status = #draft
-    * valueCodeableConcept 1..1 // Making it mandatory in this profile
-
-*Remember to replace the bracketed placeholders with your specific details when creating your extensions. The canonical URL (^url) is particularly important as it uniquely identifies your extension within the FHIR ecosystem.*
+    // --- Assume this Base Extension is defined elsewhere ---
+    /*
+    Extension: GeneralCommentExtension
+    Id: general-comment-extension
+    Title: "General Comment"
+    Description: "A general comment or note, allowing string or annotation."
+    Context: Element // Can be used on any element
+    * value[x] only string | Annotation // Allows two types, cardinality 0..1 (optional)
+    */
+    
+    // --- Define the Constrained Extension Profile ---
+    // Location: Mississauga, Ontario, Canada. Date: 2025-04-08
+    
+    Extension: ClinicalNoteExtension // New name for our specific version
+    Parent: GeneralCommentExtension // *** KEY: Inherits from and constrains the base ***
+    Id: clinical-note-extension // Unique ID for this profile
+    Title: "Clinical Note Extension (Constrained)"
+    Description: "A specific type of comment for clinical notes, constrained to be a mandatory string."
+    Status: active
+    
+    // --- Constraints ---
+    // 1. Constrain the data type: Only allow 'string' for value[x]
+    * value[x] only string
+    
+    // 2. Constrain cardinality: Make the value mandatory (1..1)
+    * value[x] 1..1
+    
+    // 3. Optionally constrain context: Maybe clinical notes only apply to specific resources
+    // Context: Observation | Condition | DiagnosticReport // Example context constraint
