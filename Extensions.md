@@ -12,7 +12,7 @@ This template defines an extension with a single value of a specific data type.
     * context [ResourceType1], [ResourceType2] ... // List the resource types where this extension can be used
     * value[x] : [DataType]  // Replace [x] with the capitalized data type (e.g., valueString, valueCodeableConcept)
 
-### Explanation
+*Explanation*
 
 * Extension: [Extension Name]: Declares an Extension with a human-friendly name.
 * Id: [extension-id]: Sets the logical identifier (kebab-case is common).
@@ -26,7 +26,7 @@ This template defines an extension with a single value of a specific data type.
 ### Example of using a Simple Value Extension:
 
     // This is a simple value extension to capture "Preferred Language of Communication"
-First, we need a simple CodeSystem and ValueSet for the language codes used in our extension. We'll use standard ISO language codes.
+// First, we need a simple CodeSystem and ValueSet for the language codes used in our extension. We'll use standard ISO language codes.
     
     CodeSystem: LanguageCodeSystem
     Id: language-cs
@@ -46,7 +46,7 @@ First, we need a simple CodeSystem and ValueSet for the language codes used in o
     Description: "A value set for common languages based on ISO 639-1."
     * include codes from system LanguageCodeSystem
 
-Then the structure of our new preferred-language extension.
+// Then the structure of our new preferred-language extension.
 
     Extension: PreferredLanguageExtension
     Id: preferred-language // The machine-readable ID for this extension definition
@@ -63,7 +63,7 @@ Then the structure of our new preferred-language extension.
     // ...and that CodeableConcept MUST be bound to our LanguageVS ValueSet.
     * valueCodeableConcept from LanguageVS (required)
 
-This is how we bind to a resource profile.
+// This is how we bind to a resource profile.
 
     Profile: OntarioPatientProfile
     Parent: Patient
@@ -86,7 +86,7 @@ This is how we bind to a resource profile.
     // 'MS' means implementers must support it.
     * extension contains preferred-language 1..1 MS
 
-Example in a Patient profile instance
+// Example in a Patient profile instance
 
     Instance: ExamplePatientOntario
     InstanceOf: OntarioPatientProfile // States that this instance conforms to our profile
@@ -113,7 +113,8 @@ Example in a Patient profile instance
     // * extension[preferred-language].valueCodeableConcept.coding[0].display = "Punjabi"
     // * extension[preferred-language].valueCodeableConcept.text = "Prefers Punjabi"
 
-Both methods are valid for populating a valueCodeableConcept in an FSH instance, but they offer different levels of control and detail.
+*There are 2 valid methods for populating a valueCodeableConcept in a FSH instance, but they offer different levels of control and detail.*
+
 Use:
 
     * extension[preferred-language].valueCodeableConcept = LanguageCodeSystem#pa "Punjabi"
