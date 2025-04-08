@@ -5,7 +5,7 @@
     Title: "Simple valueset
     Description: Template for valuesets
     * #example-code (REQUIRED) 
-    include codes from system 
+    * include codes from system 
 
     
 ### Example 1
