@@ -9,9 +9,6 @@ This is the most fundamental template for defining a CodeSystem with a list of c
     Id: [code-system-id]
     Title: "[Human-Readable Title]"
     Description: "[A brief description of the code system.]"
-    * ^url = "[Canonical URL for the CodeSystem (e.g., http://example.org/fhir/CodeSystem/my-codes)]"
-    * ^version = "[Version number (e.g., 1.0.0)]"
-    * ^status = #[draft|active|retired|...] // Optional: Set the status
     * #code1 "[Display Name for Code 1]" "[Definition for Code 1]"
     * #code2 "[Display Name for Code 2]" "[Definition for Code 2]"
     * #another-code "[Display Name for Another Code]" "[Definition for Another Code]"
@@ -26,9 +23,6 @@ While not directly part of the CodeSystem definition, it's common to create a Va
     Id: [code-system-id]
     Title: "[Human-Readable Title]"
     Description: "[A brief description of the code system.]"
-    * ^url = "[Canonical URL for the CodeSystem]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
     * #codeA "Display A" "Definition A"
     * #codeB "Display B" "Definition B"
 
@@ -38,9 +32,6 @@ While not directly part of the CodeSystem definition, it's common to create a Va
     Id: [value-set-id]
     Title: "[Human-Readable Title for ValueSet]"
     Description: "[A brief description of the value set.]"
-    * ^url = "[Canonical URL for the ValueSet]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
     * include codes from system [Canonical URL for the CodeSystem]
 
 *The separate ValueSet definition uses * include codes from system [Canonical URL for the CodeSystem] to include all codes from the CodeSystem you just defined. This is the typical way to link a CodeSystem to a ValueSet that contains all its codes.*
@@ -55,9 +46,6 @@ This template shows how to define a hierarchical structure within your CodeSyste
     Id: [code-system-id]
     Title: "[Human-Readable Title]"
     Description: "[A brief description of the code system with hierarchy.]"
-    * ^url = "[Canonical URL for the CodeSystem]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
     * ^hierarchyMeaning = #[grouped-by|is-a|part-of|classified-with|...] // Optional: Describe the hierarchy
     * concept
       * code: code1
@@ -87,9 +75,6 @@ This template shows how to define a hierarchical structure within your CodeSyste
     Id: medical-equipment-types
     Title: "Medical Equipment Types"
     Description: "A hierarchical code system for classifying types of medical equipment."
-    * ^url = "http://example.org/fhir/CodeSystem/medical-equipment-types"
-    * ^version = "1.0.0"
-    * ^status = #draft
     * ^hierarchyMeaning = #is-a // Indicates an "is-a" relationship
 
     * concept
@@ -146,9 +131,6 @@ This template demonstrates how to add properties to the CodeSystem and individua
     Id: [code-system-id]
     Title: "[Human-Readable Title]"
     Description: "[A brief description of the code system with properties.]"
-    * ^url = "[Canonical URL for the CodeSystem]"
-    * ^version = "[Version number]"
-    * ^status = #[draft|active|retired|...]
     * ^property.code = "copyright"
     * ^property.uri = "http://example.org/fhir/CodeSystem/my-codes/copyright"
     * ^property.description = "Copyright information for this code system."
