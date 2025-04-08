@@ -27,7 +27,7 @@ This template slices a repeating element based on the specific value of one of i
 * MS or cardinality: Specifies the cardinality of this specific slice.
 * where [path.to.discriminating.element] = '[expectedValue1]': The constraint that determines which instances of the repeating element belong to this slice. Replace [expectedValue1] with the specific value to match (e.g., 'phone', 'home', '8462-4').
 
-### Example: Slicing Patient.telecom by system:
+### Example: Slicing Patient.telecom by value:
 
     Profile: PatientContactDetails
     Parent: Patient
