@@ -324,7 +324,7 @@ Use the verbose method:
 
 ## Template 3: Constrained Extension
 
-// a constrained extension is a Profile built on top of an existing Extension definition. You're not creating an entirely new extension type from scratch, but rather taking a more general base extension and making it more specific for a particular use case by adding constraints.
+// A constrained extension is a Profile built on top of an existing Extension definition. You're not creating an entirely new extension type from scratch, but rather taking a more general base extension and making it more specific for a particular use case by adding constraints.
 
 // Example:
 
