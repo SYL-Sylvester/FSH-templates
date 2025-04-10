@@ -1,4 +1,8 @@
-// MedicationDispense Profile Definition
+# This is an example MedicationDispense profile
+
+## An example with supporting artifacts and profiles for references
+
+### // MedicationDispense Profile Definition
 
     Profile: PharmaMedicationDispenseProfile
     Parent: MedicationDispense
@@ -48,7 +52,7 @@
     // *** Replace URL with your actual canonical URL for the extension ***
     * extension contains http://example-pharmacy.com/fhir/StructureDefinition/dispensing-pharmacy-id 0..1 MS
 
-// Supporting Artifact: CodeSystem for Dispense Type
+### // Supporting Artifact: CodeSystem for Dispense Type
 
     CodeSystem: DispenseTypeCS
     Id: dispense-type-cs
@@ -61,7 +65,7 @@
     * #emergency "Emergency Supply" "A dispense provided in an emergency situation without a prior prescription."
     * #sample "Sample" "A free sample provided to the patient."
 
-// Supporting Artifact: ValueSet for Dispense Type
+### // Supporting Artifact: ValueSet for Dispense Type
 
     ValueSet: DispenseTypeVS
     Id: dispense-type-vs
@@ -70,7 +74,7 @@
     Status: active
     * include codes from system DispenseTypeCS
 
-// Supporting Artifact: Extension for Dispensing Pharmacy ID
+### // Supporting Artifact: Extension for Dispensing Pharmacy ID
 
     Extension: DispensingPharmacyIdExtension
     Id: dispensing-pharmacy-id
@@ -89,7 +93,7 @@
     // Canonical URL Example (Replace with your actual base):
     // Url: http://example-pharmacy.com/fhir/StructureDefinition/dispensing-pharmacy-id
 
-// Supporting Artifacts: Placeholder Profiles for References
+### // Supporting Artifacts: Placeholder Profiles for References
 
     Profile: MyMedicationProfile
     Parent: Medication
