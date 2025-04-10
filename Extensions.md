@@ -2,116 +2,54 @@
 
 *Here are a few templates for writing Extensions using FHIR Shorthand (FSH)*
 
-## Template 1: Simple Value Extension
-This template defines an extension with a single value of a specific data type.
+## Template 1: Simple Extension with a Primitive Value
+Purpose: Adds a single piece of information represented by a primitive data type (string, boolean, integer, date, code, etc.).
+Example: A flag indicating if a diagnosis is considered primary for an encounter.
 
-    Extension: [Extension Name]
-    Id: [extension-id]
-    Title: "[Human-Readable Title]"
-    Description: "[A brief description of the extension's purpose.]"
-    * context [ResourceType1], [ResourceType2] ... // List the resource types where this extension can be used
-    * value[x] : [DataType]  // Replace [x] with the capitalized data type (e.g., valueString, valueCodeableConcept)
+// --- 1a. Extension Definition ---
 
-*Explanation*
+    Extension: IsPrimaryDiagnosisExtension
+    Id: is-primary-diagnosis
+    Title: "Is Primary Diagnosis Flag"
+    Description: "A simple boolean flag indicating if a condition is considered the primary diagnosis for an encounter or episode."
+    Context: Condition // Applicable to the Condition resource
 
-* Extension: [Extension Name]: Declares an Extension with a human-friendly name.
-* Id: [extension-id]: Sets the logical identifier (kebab-case is common).
-* Title: "[Human-Readable Title]": Provides a descriptive title.
-* Description: "[A brief description ... ]": Explains the purpose of the Extension.
-  * context [ResourceType1], ...: Specifies the FHIR resource types where this extension can be applied. List multiple resource types separated by commas.
-  * value[x] : [DataType]: Defines the value of the extension:
-      * value[x] is the element name. Replace [x] with the capitalized FHIR data type (e.g., valueString, valueInteger, valueCodeableConcept, valueReference).
-      * :[DataType] specifies the data type of the value.
+    // Define the single value - must be a boolean
+    * value[x] only boolean
+    // Optionally make the value mandatory if the extension is present
+    * valueBoolean 1..1
 
-### Example of using a Simple Value Extension:
 
-// This is a simple value extension to capture "Preferred Language of Communication"
-// First, we need a simple CodeSystem and ValueSet for the language codes used in our extension. We'll use standard ISO language codes.
-    
-    CodeSystem: LanguageCodeSystem
-    Id: language-cs
-    Title: "Language Code System"
-    Description: "Standard ISO 639-1 language codes."
-    * #en "English"
-    * #fr "French"
-    * #es "Spanish"
-    * #it "Italian"
-    * #zh "Chinese"
-    * #pa "Punjabi"
-    * #ur "Urdu"
+// --- 1b. Profile Definition (Using the Extension) ---
 
-    ValueSet: LanguageVS
-    Id: language-vs
-    Title: "Language Value Set"
-    Description: "A value set for common languages based on ISO 639-1."
-    * include codes from system LanguageCodeSystem
+    Profile: ConditionWithPrimaryFlag
+    Parent: Condition
+    Id: condition-primary-flag-profile
+    Title: "Condition Profile with Primary Flag"
+    Description: "Allows marking a Condition as primary."
 
-// Then the structure of our new preferred-language extension.
+    * code MS
+    * subject MS
 
-    Extension: PreferredLanguageExtension
-    Id: preferred-language // The machine-readable ID for this extension definition
-    Title: "Preferred Language of Communication"
-    Description: "Specifies the patient's preferred language for spoken and written communication."
+    // Apply the simple extension at the root level of Condition
+    // Make it optional (0..1) and Must Support (MS)
+    * extension contains http://your-canonical-url-base.com/fhir/StructureDefinition/is-primary-diagnosis 0..1 MS
 
-    // Context specifies where this extension can be used.
-    // Using 'Patient' means it can appear at the root level of a Patient resource.
-    Context: Patient
+// --- 1c. Instance Definition (Example) ---
 
-    // Define the extension's value: This says it must be a CodeableConcept...
-    * value[x] only CodeableConcept
-
-    // ...and that CodeableConcept MUST be bound to our LanguageVS ValueSet.
-    * valueCodeableConcept from LanguageVS (required)
-
-// This is how we bind to a resource profile.
-
-    Profile: OntarioPatientProfile
-    Parent: Patient
-    Id: ontario-patient-profile
-    Title: "Ontario Patient Profile"
-    Description: "A profile for Patient resources in Ontario, requiring preferred language."
-
-    // --- Core Element Constraints (Examples) ---
-    * identifier MS // Must support identifiers
-    * identifier.system 1..*
-    * identifier.value 1..*
-    * name MS
-    * birthDate MS
-    * gender MS
-
-    // --- Extension Constraint ---
-    // Use 'contains' to indicate the profile uses this extension.
-    // Refer to the extension by its Id ('preferred-language').
-    // Cardinality '1..1' makes it mandatory in this profile.
-    // 'MS' means implementers must support it.
-    * extension contains preferred-language 1..1 MS
-
-// Example in a Patient profile instance
-
-    Instance: ExamplePatientOntario
-    InstanceOf: OntarioPatientProfile // States that this instance conforms to our profile
+    Instance: PrimaryDiagnosisExampleCondition
+    InstanceOf: ConditionWithPrimaryFlag
     Usage: #example
-    Title: "Example Ontario Patient Instance"
-    Description: "An example Patient conforming to the Ontario profile, including the Preferred Language extension."
+    Title: "Example Condition Marked as Primary"
 
-    * identifier[0].system = "urn:oid:1.2.840.113554.1.2.3.4.5.6" // Example OID for Ontario HCN
-    * identifier[0].value = "1234567890-AB"
-    * name[0].family = "Singh"
-    * name[0].given = "Amar"
-    * birthDate = "1975-05-15"
-    * gender = #male
+    * id = "cond-primary-ex1"
+    * clinicalStatus = http://terminology.hl7.org/CodeSystem/condition-clinical#active
+    * verificationStatus = http://terminology.hl7.org/CodeSystem/condition-ver-status#confirmed
+    * code = http://snomed.info/sct#386661006 "Type 2 diabetes mellitus" // Example code
+    * subject.reference = "Patient/example"
 
-    // --- Using the Extension ---
-    // Reference the extension by its Id ('preferred-language').
-    // Provide the value as a CodeableConcept, using the FSH shorthand for coding.
-    // The code MUST come from the 'LanguageVS' we bound in the extension definition.
-    * extension[preferred-language].valueCodeableConcept = LanguageCodeSystem#pa "Punjabi"
-
-    // You could also populate the extension value more verbosely:
-    // * extension[preferred-language].valueCodeableConcept.coding[0].system = "http://your-canonical-url/CodeSystem/language-cs" // Replace with actual canonical URL
-    // * extension[preferred-language].valueCodeableConcept.coding[0].code = #pa
-    // * extension[preferred-language].valueCodeableConcept.coding[0].display = "Punjabi"
-    // * extension[preferred-language].valueCodeableConcept.text = "Prefers Punjabi"
+    // Use the extension and set its boolean value
+    * extension[is-primary-diagnosis].valueBoolean = true
 
 *There are 2 valid methods for populating a valueCodeableConcept in a FSH instance, but they offer different levels of control and detail.*
 
