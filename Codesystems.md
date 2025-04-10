@@ -14,32 +14,52 @@ This is the most fundamental template for defining a CodeSystem with a list of c
     * #another-code "[Display Name for Another Code]" "[Definition for Another Code]"
     // Add more codes as needed
 
+// Example
+
+    CodeSystem: OrderStatusCS
+    Id: order-status-cs
+    Title: "Order Status Code System"
+    Description: "A simple set of codes representing the status of an order or request."
+    * #draft "Draft"
+    * #active "Active"
+    * #on-hold "On Hold"
+    * #revoked "Revoked"
+    * #completed "Completed"
+    * #entered-in-error "Entered in Error"
+    * #unknown "Unknown"
+
+// Create ValueSet (often in a different .fsh file)
+
+    ValueSet: OrderStatusVS
+    Id: order-status-vs
+    Title: "Order Status Value Set"
+    Description: "Includes all codes from the OrderStatusCS CodeSystem."
+
+    // This rule includes every code defined in OrderStatusCS
+    * include codes from system OrderStatusCS
+
+// Profile binding
+
+    Profile: ServiceRequestWithOrderStatus
+    Parent: ServiceRequest
+    Id: service-request-with-order-status
+    Title: "ServiceRequest Profile with Bound Order Status"
+    Description: "A profile for ServiceRequest that requires the status code to be from the OrderStatusVS."
+
+    // Core element constraints (examples)
+    * subject MS
+    * code MS
+    * intent MS
+
+    // Bind the 'status' element (type 'code') to our ValueSet
+    // Use 'required' strength to strictly enforce codes from the VS.
+    * status from OrderStatusVS (required)
+    * status MS // Mark status as Must Support
+
+*The separate ValueSet definition can also use (* include codes from system [Canonical URL for the CodeSystem]) to include all codes from the CodeSystem you just defined. This is the typical way to link a CodeSystem to a ValueSet that contains all its codes.* 
 
 
 ## Template 2: CodeSystem with a ValueSet Binding
-While not directly part of the CodeSystem definition, it's common to create a ValueSet that includes the codes from your CodeSystem.
-
-    CodeSystem: [CodeSystem Name]
-    Id: [code-system-id]
-    Title: "[Human-Readable Title]"
-    Description: "[A brief description of the code system.]"
-    * #codeA "Display A" "Definition A"
-    * #codeB "Display B" "Definition B"
-
-// --- Separate ValueSet definition (often in a different .fsh file) ---
-
-    ValueSet: [ValueSet Name]
-    Id: [value-set-id]
-    Title: "[Human-Readable Title for ValueSet]"
-    Description: "[A brief description of the value set.]"
-    * include codes from system [Canonical URL for the CodeSystem]
-
-*The separate ValueSet definition uses * include codes from system [Canonical URL for the CodeSystem] to include all codes from the CodeSystem you just defined. This is the typical way to link a CodeSystem to a ValueSet that contains all its codes.*
-
-
-
-
-## Template 3: CodeSystem with Hierarchy (using concept element)
 This template shows how to define a hierarchical structure within your CodeSystem.
 
     CodeSystem: [CodeSystem Name]
@@ -124,7 +144,7 @@ This template shows how to define a hierarchical structure within your CodeSyste
 
 
 
-## Template 4: CodeSystem with Properties
+## Template 3: CodeSystem with Properties
 This template demonstrates how to add properties to the CodeSystem and individual codes.
 
     CodeSystem: [CodeSystem Name]
