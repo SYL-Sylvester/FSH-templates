@@ -57,7 +57,7 @@ This template defines an extension with a single value of a specific data type.
     // Using 'Patient' means it can appear at the root level of a Patient resource.
     Context: Patient
 
-    // Define the extension's value: it must be a CodeableConcept...
+    // Define the extension's value: This says it must be a CodeableConcept...
     * value[x] only CodeableConcept
 
     // ...and that CodeableConcept MUST be bound to our LanguageVS ValueSet.
