@@ -3,14 +3,7 @@
 ## An example of A valueset definitions and two slice defintions
 
 
-### Define the ValueSet for Administrative Gender
-
-    ValueSet: AdministrativeGenderVS
-    * ^url = "http://hl7.org/fhir/ValueSet/administrative-gender"
-    * ^version = "4.0.1"
-    * include codes from system "http://hl7.org/fhir/administrative-gender"
-
-### Define the Patient Profile
+### // Patient Profile
 
     Profile: MyPatientProfile
     Parent: Patient
@@ -29,7 +22,7 @@
     * telecom.system from ValueSet[ContactPointSystem] (required)
     * telecom.use from ValueSet[ContactPointUse] (required)
 
-### Define slices for identifier
+### // Define slices for identifier
 
     Slice: IdentifierForMRN
     * system = "urn:oid:1.2.3.4.5.6.7"
@@ -38,3 +31,14 @@
     Slice: IdentifierForSSN
     * system = "http://hl7.org/fhir/sid/us-ssn"
     * type from ValueSet[IdentifierType] (required)
+
+### // Supporting Artifact- ValueSet for Administrative Gender
+
+    ValueSet: AdministrativeGenderVS
+    * ^url = "http://hl7.org/fhir/ValueSet/administrative-gender"
+    * ^version = "4.0.1"
+    * include codes from system "http://hl7.org/fhir/administrative-gender"
+
+
+
+
