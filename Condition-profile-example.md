@@ -81,8 +81,6 @@
     // The rank value is required if the extension is used
     * valuePositiveInt 1..1
     
-    // Canonical URL Example (Replace with your actual base):
-    // Url: http://example-clinic.com/fhir/StructureDefinition/diagnosis-rank
     
 
 ### // Supporting Artifacts: Placeholder Profiles for References
