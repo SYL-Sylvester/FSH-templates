@@ -90,8 +90,6 @@
     * valueIdentifier.system 1..1 // ...including system...
     * valueIdentifier.value 1..1 // ...and value.
     
-    // Canonical URL Example (Replace with your actual base):
-    // Url: http://example-pharmacy.com/fhir/StructureDefinition/dispensing-pharmacy-id
 
 ### // Supporting Artifacts: Placeholder Profiles for References
 
