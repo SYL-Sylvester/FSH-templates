@@ -101,8 +101,6 @@
     * value[x] only boolean
     * valueBoolean 1..1 // If extension is used, the boolean value is required
     
-    // Canonical URL Example (Replace with your actual base):
-    // Url: http://example-clinic.com/fhir/StructureDefinition/followup-required
 
 
 ### // Supporting Artifacts: Placeholder Profiles for References
